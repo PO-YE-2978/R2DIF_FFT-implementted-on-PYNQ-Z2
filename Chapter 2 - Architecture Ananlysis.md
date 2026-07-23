@@ -13,7 +13,7 @@ Chapter 2 - 64-point Radix-2 DIF Single BRAM and Single Butterfly PE FFT Archite
 <p align="center">
   BRAM -> Read 2 samples -> Butterfly PE -> Write result back -> Next address -> Next butterfly ...
 </p>
-也就是透過少量硬體資源，重複使用 Butterfly 來完成 FFT。以下我將簡述架構中每個 block 的設計機制。
+換句話說，我們首先會將time domain 64 個 sampling point 存到 Memory中，接著根據 address 取出 corresponded value 放入 Butterfly PE 運算，接著再將算好的值存回去，以此類推直到所有64個點全部都算完後再輸出。這樣的設計下，我們的 BRAM 會同時存有 input 和 Intermediate result。此處優點在於 memory usage 和 routing complexity 可降低，整體難度較為簡單，但缺點會造成速度較慢。也就是可透過少量硬體資源 (重複使用 Butterfly PE) 來完成 FFT。以下我將簡述架構中每個 block 的設計機制，詳細 Verilog design 請見 chapter 3。
 
 ## 2.2 Butterfly Processing Unit (PE)
 ---
@@ -40,3 +40,20 @@ Chapter 2 - 64-point Radix-2 DIF Single BRAM and Single Butterfly PE FFT Archite
 ## 2.4 Adderss Generator
 ---
 由於我們使用的架構是64point DIF FFT，因此第一個stage需要read (0,32)、(1,33)...，第二個stage則是(0,16)、(1,17)...。為了讓 butterfly PE 能夠計算正確的value，我們需要有 Address Generator 用來控制讀寫位置並產生BRAM Address。
+
+## 2.5 Controller FSM
+---
+這個部分是整個 FFT 控制的核心，例如 FFT 需要知道現在的 state、是否讀寫完成、第幾個 butterfly 等資訊。而在我們設計的 64 point FFT 當中，主要藉由 1 個 Butterfly PE, 1 個 controller 和 1 個 Memory 構成並重複使用。因此我們會設計多個 state 告訴 FFT 現在應該執行那一步。
+
+## 2.6 Top Level Architecture
+---
+完整的 block diagram 如 Fig2.2 所示
+<p align="center">
+  <img width="341" height="265" alt="image" src="https://github.com/user-attachments/assets/0ba2f726-cb5b-4d76-8d2b-79bee660245c" />
+  <br />
+  <em> Fig2.2 Block diagram of our FFT Module</em>
+</p>
+
+## 2.7 Chapter Review
+---
+本章將 FFT Algorithm 拆分成多個可實例化的 Module，包括可重複使用的 Butterfly PE、FSM Control Uint、Address Generator 和 BRAM 等。下一章開始會詳細介紹每個 module 的細節。

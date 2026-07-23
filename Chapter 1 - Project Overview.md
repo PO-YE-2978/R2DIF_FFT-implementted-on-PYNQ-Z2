@@ -64,7 +64,7 @@ Chapter 1 Project Overview
   * Butterfly 的加減法先進行，再乘上 Twiddle Factor，便於搭配單一 Butterfly PE 與單一 BRAM 的資料流。
   * 對於「每個 stage 讀取兩筆資料、運算後再寫回同一塊 BRAM」的架構，控制流程相對直觀。
   值得注意的是，DIF FFT 最後輸出的結果會是 bit-reversed 的順序，因此後續 python 驗證時需要重勳排列。
-#### 4. Wht Single BRAM
+#### 4. Why Single BRAM
   在硬體上有許多設計架構，包括 Memory-Based Architecture、Pipeline Architecture、Fully Parallel Architecture等。本次使用 Single BRAM + Single Butterfly PE 的原因如下 : 
   * 控制邏輯清楚：每次從 BRAM 讀出兩筆資料，完成 Butterfly 運算後再寫回原位置。
   * 容易理解資料流：資料如何讀、如何寫、如何跨越不同 Stage，一目了然。

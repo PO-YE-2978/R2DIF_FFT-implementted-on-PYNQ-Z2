@@ -18,13 +18,14 @@ FFT RTL Code analysis in detailed
 ---
 Top Module 的主要功能是負責整合所有 module。其中的 I/O Interface 如下表所示
 
-<p align="center">
- | I/O port | Name | Functionality |
- | :--: | :--: | :--: |
- | Input | start | FFT Triggering signal |
- | Output | busy | FFT_is_running flag |
- | Output | done | Check if FFT is done |
-</p>
+<div align="center">
+ 
+| I/O port | Name | Functionality |
+| :--: | :--: | :--: |
+| Input | start | FFT Triggering signal |
+| Output | busy | FFT_is_running flag |
+| Output | done | Check if FFT is done |
+</div>
 
 上述的 signal 都會透過 AXI register 與 PYNQ python 直接溝通，確定現在硬體的情況。
 
@@ -35,3 +36,6 @@ Top Module 的主要功能是負責整合所有 module。其中的 I/O Interface
 2. 在 component name 中改名後，將 "Single Port RAM" 改成 "Ture Dual Port RAM"
 3. 到 Port A Option 和 Port B Option 中將 "Primitives Output Register" 關掉 (減少一個cycle)
 4. "Enable Port Type" 都改成 "Always Enable"
+
+## 3.4 BRAM Address Mapping
+---

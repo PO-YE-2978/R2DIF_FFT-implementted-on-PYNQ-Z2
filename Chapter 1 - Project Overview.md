@@ -1,4 +1,4 @@
-<img width="1024" height="588" alt="image" src="https://github.com/user-attachments/assets/ecd8e670-aa93-4b39-a640-b417b0224316" /><img width="1024" height="588" alt="image" src="https://github.com/user-attachments/assets/473acb8d-c30c-4a2a-b1ef-88ead91cf981" />Chapter 1 Project Overview
+Chapter 1 Project Overview
 ===
 ## 1.1 為什麼要做這個專案？
 * 本專案的目標，是從零開始設計一個可在 FPGA 上運行的 64-point FFT IP Core，並透過 PYNQ 平台，使用 Python 控制 FPGA 完成 FFT 運算。

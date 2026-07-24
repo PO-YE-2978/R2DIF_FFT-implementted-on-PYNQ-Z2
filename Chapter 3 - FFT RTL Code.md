@@ -1,4 +1,4 @@
-FFT RTL Code analysis in detailed
+Chapter 3 - FFT RTL Code analysis in detailed
 ===
 本章將會進入到實際的 Verilog code 設計，包括了解每個 module 的功能、接線、資料流等等。
 

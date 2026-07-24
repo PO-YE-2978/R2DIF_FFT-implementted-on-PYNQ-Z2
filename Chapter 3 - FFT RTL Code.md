@@ -89,3 +89,8 @@ Top Module 的主要功能是負責整合所有 module。其中的 I/O Interface
 * twiddle_rom 提供旋轉係數
 
 具體的 Dataflow 如下
+
+<p align="center">
+Start -> Controller FSM -> Address Generator -> BRAM Read -> Xa , Xb -> Butterfly PE
+ -> Complex Multiply -> BRAM WriteBack -> Next butterfly -> Next stage -> ... -> done
+</p>

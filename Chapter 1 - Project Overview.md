@@ -1,4 +1,4 @@
-Chapter 1 Project Overview
+Chapter 1 - Project Overview
 ===
 ## 1.1 為什麼要做這個專案？
 * 本專案的目標，是從零開始設計一個可在 FPGA 上運行的 64-point FFT IP Core，並透過 PYNQ 平台，使用 Python 控制 FPGA 完成 FFT 運算。

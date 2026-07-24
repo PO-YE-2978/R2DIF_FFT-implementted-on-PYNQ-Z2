@@ -46,3 +46,46 @@ Top Module 的主要功能是負責整合所有 module。其中的 I/O Interface
 <p align="center">
   {24'd0, addr_a, 2'b00}
 </p>
+
+## 3.5 Controller FSM Architecture
+---
+此 module 為控制整個 FFT 的核心，主要的 stage 有 6 個，包括 S_IDLE S_READ S_WAIT1 S_WAIT2 S_WRITE S_DONE。以下將分別介紹各個 stage 的作用 :
+1. State 1：S_IDLE
+   > Initial state. 當 "start" 訊號開始。 State transition 到 S_READ。
+2. State 2：S_READ
+   > 目的 : 啟動 BRAM Read。
+   > 控制 "bram_ena" 和 "bram_enb" 使 Port A 讀 Xa、Port B 讀 Xb 並放入 Butterfly PE。
+3. State 3：S_WAIT1 / S_WAIT2
+   > 目的 : 等 BRAM 讀資料。
+   * BRAM 是 synchronous memory 而非 combinational memory，也就是給出 address 後需要等 clock latency 後才能得到 data。
+4. State 4：S_WRITE
+   > 目的 : Butterfly PE 算完 Ya 和 Yb, 之後寫回 BRAM。
+5. State 5：S_DONE
+   > 目的 : FFT 算完，通知 PYNQ / Software。
+
+## 3.6 Address Generator
+--- 
+* 目的 : 用以計算此時要放入 Butterfly PE Value 的 address。
+* 透過 "stage" 和 "b_idx" 產生 "addr_a", "addr_b", "twiddle_addr"。
+  > FFT 每個 stage 需要的偏移量不同。以我們的例子為例，Stage 0 distance = 32, Stage 1 distance = 16 ...
+
+## 3.7 Butterfly PE
+---
+* 目的 : 將 Xa, Xb 和 twiddle factor W 做運算，得到 output Ya, Yb。
+* 包含 : Addition, Subtraction, Complex multiplier
+
+## 3.8 Complex Multiplier
+* 目的 : 計算複數乘法 : 即 $(a+jb)(c+jd)$, 其中 real part 為 $ac-bd$, imaginary part 為 $ad+bc$ 。
+
+## 3.9 Twiddle ROM
+* 目的 : 儲存 twiddle factor $\bf{W}_N^k$ 的 value。
+
+## 3.10 Chapter Review
+本章建立了一個完整 R2 DIF Single Memory Based FFT 所需要的 module，其中
+* controller_fsm 決定時間
+* addr_generator 決定位址
+* butterfly 決定數學運算
+* BRAM 提供資料儲存
+* twiddle_rom 提供旋轉係數
+
+具體的 Dataflow 如下

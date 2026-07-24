@@ -36,6 +36,13 @@ Top Module 的主要功能是負責整合所有 module。其中的 I/O Interface
 2. 在 component name 中改名後，將 "Single Port RAM" 改成 "Ture Dual Port RAM"
 3. 到 Port A Option 和 Port B Option 中將 "Primitives Output Register" 關掉 (減少一個cycle)
 4. "Enable Port Type" 都改成 "Always Enable"
+5. "Write Width" 和 "Read Width" 改成 32 (bit)
 
+* 第五點中改成 32 的原因是 : 根據前面定義，每個點包含 32 bit data (16 bit imag + 16 bit real part)。這樣每筆 data 就會佔有 4 byte 的空間。
 ## 3.4 BRAM Address Mapping
 ---
+在 PYNQ Z2 board 中，所使用的 CPU 和 AXI BUS 為 32 bit 的 Byte address。因為我們每筆 data 佔 4 byte， 所以若要選擇對應的 bram value，需要在原先的 bram address 上再乘 4 (shift left 2 bit)。舉例來說，原先要取第 0 個和第 1 個 point 的 value，此時 bram address 就應該是 0x0 和 0x4 。而在後續的 address generator 中，我們用來選擇 bram address 的 index (addr_a) 共有 6 bit (因為 $log_264 = 6$ 個stage)。綜上所述，為了對其 32 bit 的 AXI interface，我們最後再輸出的 address 應該包裝成
+
+<p align="center">
+  {24'd0, addr_a, 2'b00}
+</p>

@@ -7,4 +7,4 @@ Chapter 7 - BRAM Memory Architecture 與 Address Generator 設計分析
 * Fixed-point 數值格式
 本章節將接續介紹 Memory Architecture + Address Generation。
 
-## 7.1 
+## 7.1 BRAM Size

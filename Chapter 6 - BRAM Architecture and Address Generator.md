@@ -39,4 +39,11 @@ Chapter 6 - BRAM Memory Architecture 與 Address Generator 設計分析
    * BRAM 有 1 個 cycle 的 Latency ( Block Memory Generator 生成時將 "Primitives Output Register" 取消勾選)。因此在設計 FSM 時要注意 Read 完後要等待一個 cycle 才能抓到正確資料。
      
 ## 6.2 Address Generator
-1. 目的 : 
+1. 目的 :
+   * 回顧 Chapter 3 - 3.6 所示，我們的 addr_generator.v module 為 FFT Memory Controller 的核心。其概念是藉由 stage 不同推算出對應的 distance，找到 butterfly 和 twiddle factor 所需要的 address。 I/O 如下 :
+     > Input : stage、butterfly index
+     
+     > Output : addr_a, addr_b, twiddle_addr
+
+2. Distance Calculation :
+   

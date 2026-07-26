@@ -31,7 +31,10 @@ Top Module 的主要功能是負責整合所有 module。其中的 I/O Interface
 
 ## 3.3 BRAM Interface
 ---
-在我們建立的 BRAM 中，選擇使用 Dual port 的原因是這樣 fft_butterfly 一次就可以同時讀兩個 input。以 first stage 為例，若使用 dual port 則可以同一時間讀 x0, x32，不用分開讀 => 速度提高。具體建立的流程如下 : 
+在我們建立的 BRAM 中，選擇使用 Dual port 的原因是這樣 fft_butterfly 一次就可以同時讀兩個 input。以 first stage 為例，若使用 dual port 則可以同一時間讀 x0, x32，不用分開讀 => 速度提高。
+* Port A 對應 read Xa, write Ya; Port B 對應 read Xb, write Yb。
+
+具體建立的流程如下 : 
 1. 在IP catalog 中找到 Block Memory Generator 並點選
 2. 在 component name 中改名後，將 "Single Port RAM" 改成 "Ture Dual Port RAM"
 3. 到 Port A Option 和 Port B Option 中將 "Primitives Output Register" 關掉 (減少一個cycle)

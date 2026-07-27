@@ -46,4 +46,22 @@ Chapter 6 - BRAM Memory Architecture 與 Address Generator 設計分析
      > Output : addr_a, addr_b, twiddle_addr
 
 2. Distance Calculation :
+
+   * Stage Distance Difference
+     如同前面所述，每經過一個 stage，Distance 就會除二，從 32 開始到 1，具體如下 :
+     <div align="center">
+     
+     | Stage | Distance | Group |
+     | :--: | :--: | :--: |
+     | 0 | 32 | 0~63 |
+     | 1 | 16 | 0~31, 32~63 |
+     | 2 | 8 | 0~15, 16~31, 32~47, 48~63|
+     | 3 | 4 | 0~7, 8~15, 16~23, 24~31, ... , 56~63| 
+     | 4 | 2 | 0~3, 4~7, 8~11, 12~15, ... , 60~63| 
+     | 5 | 1 | 0~1, 2~3, 4~5, 6~7, ... , 62~63|
    
+   </div>
+   
+     * 每個 stage 都有不同的 group，分別對應到 data pair 如何選擇。以 Stage 1 為例，因為 distance 為 16，加上 group 分成兩組，故在 stage 1 送入 butterfly 的 pair (Xa, Xb) 為 :
+       > (x0, x16), (x1, x17), ..., (x15, x31), (x32, x48), ..., (x47, x63)
+   * Butterfly Pair Address Mapping

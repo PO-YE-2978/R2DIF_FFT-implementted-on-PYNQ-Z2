@@ -47,21 +47,61 @@ Chapter 6 - BRAM Memory Architecture 與 Address Generator 設計分析
 
 2. Distance Calculation :
 
-   * Stage Distance Difference
-     如同前面所述，每經過一個 stage，Distance 就會除二，從 32 開始到 1，具體如下 :
+   * Stage Distance Difference (Xa 與 Xb address 的距離)
+     如同前面所述，每經過一個 stage，Distance 就會除二，從 32 開始到 1。除此之外，每經過 1 個 stage，所有 Group 也會拆分成兩個部分 (前半和後半) : 具體如下 :
      <div align="center">
      
      | Stage | Distance | Group |
      | :--: | :--: | :--: |
-     | 0 | 32 | 0~63 |
-     | 1 | 16 | 0~31, 32~63 |
-     | 2 | 8 | 0~15, 16~31, 32~47, 48~63|
-     | 3 | 4 | 0~7, 8~15, 16~23, 24~31, ... , 56~63| 
-     | 4 | 2 | 0~3, 4~7, 8~11, 12~15, ... , 60~63| 
-     | 5 | 1 | 0~1, 2~3, 4~5, 6~7, ... , 62~63|
+     | 0 | 32 | 0-63 |
+     | 1 | 16 | 0-31, 32-63 |
+     | 2 | 8 | 0-15, 16-31, 32-47, 48-63|
+     | 3 | 4 | 0-7, 8-15, 16-23, 24-31, ... , 56-63| 
+     | 4 | 2 | 0-3, 4-7, 8-11, 12-15, ... , 60-63| 
+     | 5 | 1 | 0-1, 2-3, 4-5, 6-7, ... , 62-63|
    
    </div>
    
-     * 每個 stage 都有不同的 group，分別對應到 data pair 如何選擇。以 Stage 1 為例，因為 distance 為 16，加上 group 分成兩組，故在 stage 1 送入 butterfly 的 pair (Xa, Xb) 為 :
+     * Butterfly Pair Address Mapping
+       
+       每個 stage 都有不同的 group，分別對應到 data pair 如何選擇。以 Stage 1 為例，因為 distance 為 16，又因 group 分成兩組，故在 stage 1 送入 butterfly 的 pair (Xa, Xb) 為 :
        > (x0, x16), (x1, x17), ..., (x15, x31), (x32, x48), ..., (x47, x63)
-   * Butterfly Pair Address Mapping
+
+       共計 32 組。
+       
+     * 公式如下 :
+  
+       For addr_a and addr_b in same Group : 
+       <p align="center">
+         addr_a = butterfly_index
+       </p>
+
+       <p align="center">
+         addr_b = butterfly_index + Distance
+       </p>
+
+3. 硬體實作 :
+   * Address Generator Structure :
+     > Stage Counter -> Butterfly Counter -> Address Logic -> BRAM Address
+
+   * Stage Counter 與 Butterfly Counter 關係 :
+
+     Initially Stage 和 butterfly 皆為 0，接著 butterfly++ 直到 butterfly=31，而後在進行下一個 Stage (stage++)，最後做完 Stage = 5, butterfly = 31 即完成。
+
+   * Address Generator 與 FSM 關係 :
+     > controller_fsm -> stage counter ->  addr_generator -> BRAM address
+
+     完整流程 :
+       > Step 1 : FSM READ，接著 Address Generator 輸出 addr_a, addr_b
+       > Step 2 : BRAM 輸出 Xa, Xb
+       > Step 3 : Butterfly 計算 Ya, Yb
+       > Step 4 : Memory Write Back
+       > Step 5 : Counter Update
+
+   * Memory Address 與 PYNQ 的關係
+     
+     PYNQ 會透過 AXI 介面操作 BRAM，Python 只負責寫 input、啟動 FFT 和讀 output。架構如下 : 
+     > Python -> AXI Register -> FFT Controller -> BRAM
+
+## 6.3 Chapter Review
+本章分析了 Memory 和 address generator 在這個 project 的重要性，其核心概念在於如何正確運用 BRAM 並找到對應地址放入 Butterfly 中運算。所述硬體概念與 RTL code 對應表如下 : 

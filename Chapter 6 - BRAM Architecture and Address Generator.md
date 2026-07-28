@@ -105,3 +105,13 @@ Chapter 6 - BRAM Memory Architecture 與 Address Generator 設計分析
 
 ## 6.3 Chapter Review
 本章分析了 Memory 和 address generator 在這個 project 的重要性，其核心概念在於如何正確運用 BRAM 並找到對應地址放入 Butterfly 中運算。所述硬體概念與 RTL code 對應表如下 : 
+<div align="center">
+  
+  | Concept | RTL Module |
+  | :--: | :--: |
+  | Memory Controller | controller_fsm |
+  | Address Generator  | addr_generator.v |
+  | Data Storage | BRAM |
+  | Read/Write timing | FSM state |
+  | Butterfly pair | addr_a / addr_b |
+</div>

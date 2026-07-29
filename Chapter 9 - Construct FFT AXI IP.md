@@ -8,3 +8,7 @@ Chapter 9 - Vivado 建立 FFT AXI IP 與 PYNQ Overlay 整合流程
 </p>
 
 ## 9.1 Block Design 前置確認步驟
+1. 在 create project 中，確認 Default Part 中按 ```boards``` 選擇的是 PYNQ Z2 板子。 
+2. 將 FFT_top 包裝成 AXI IP 前要先確認 FFT 功能正確 (否則後續 Debug 會較麻煩，Error 可能出自於 FFT Algorithm、AXI 或 PYNQ 等)
+   > 測試功能是否正確可先寫 testbench 再驗證波型。
+3.  

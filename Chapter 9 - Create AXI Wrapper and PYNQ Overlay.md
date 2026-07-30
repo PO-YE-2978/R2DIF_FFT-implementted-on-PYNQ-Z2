@@ -13,7 +13,7 @@ Chapter 9 - Vivado 建立 AXI Wrapper 與 PYNQ Overlay 整合流程
    > 測試功能是否正確可先寫 testbench 再驗證波型。
 3. 主頁中點選 Setting -> IP -> Repository，確認 FFT IP 是否已經加入。(若沒有，手動加入並點選 Refresh-All)
 
-## 9.2 Block Design Flow
+## 9.2 Block Design Flow (SoC Structure Data Flow)
 確認前面步驟都是正確的後，接下來就可以把 IP 串在一起了。
 1. 主頁中點選 ```create block design```， default name 維持 design_1 即可。
 2. 左邊生成的 Diagram 中，加入以下 IP :
@@ -43,7 +43,25 @@ Chapter 9 - Vivado 建立 AXI Wrapper 與 PYNQ Overlay 整合流程
     > Port A :  前面接 bram_switch_v1_0 (Multiplexer），決定 Port A 是由 AXI BRAM Controller 還是 FFT IP 控制。
     
     > Port B : 沒有經過 Switch，直接拉到 FFT Core。
-  * bram_switch_v1_0 : 這部分是我們另外寫的，因為 BRAM 一次只能收一組控制訊號，但 CPU 和 FFT IP 都需要使用，因此需要一個 switch 決定現在 BRAM 接收誰的訊號。
+  * bram_switch_v1_0 : 這部分是我們另外寫的，因為 BRAM Port A 一次只能收一組控制訊號，但 CPU 和 FFT IP 都需要使用 (CPU 要寫 Input、讀 Output data,
+    FFT 則是計算 Intermediate result，兩者都是 BRAM 的 Master)，因此需要一個 switch (MUX) 決定現在 BRAM 接收誰的訊號。
     > FFT 開始前 : switch mode 為 CPU；等 FFT 開始後，switch mode 為 FFT；計算完成以後，switch mode 再切回 CPU。
+    
+    > 我們現在用的 Dual Port BRAM 其實可以 CPU 接 port A，FFT 接 port B。但在我們的設計上，port A 和 B 是為了讓 butterfly PE 同時讀兩筆資料而設計，
+    因此我們在 port A 加 switch 決定 Master，port B 保留直接與 FFT 相接。
   * my_fft_top_ip_v1_0 : 我們上一章包裝過的 FFT Core IP。
+
+  這樣的架構下，Data Flow 主要可以分成三個階段 : 
+  
+  <div align="center">
+    
+  | | Stage | Data Flow |
+  | :--: | :--: |:--: |
+  | Phase 1 | CPU Loading (FFT 未開始, switch 為 CPU) | CPU -> Port A -> BRAM |
+  | Phase 2 | FFT Running (Switch 轉成 FFT) | FFT -> Port A + Port B -> BRAM |
+  | Phase 3 | CPU Reading (Switch 切回 CPU) | BRAM -> Python |
+
+  </div>
+
+
     

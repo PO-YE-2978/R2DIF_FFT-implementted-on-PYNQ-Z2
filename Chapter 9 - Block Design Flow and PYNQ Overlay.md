@@ -55,13 +55,41 @@ Chapter 9 - Vivado 建立 AXI Wrapper 與 PYNQ Overlay 整合流程
   
   <div align="center">
     
-  | | Stage | Data Flow |
-  | :--: | :--: |:--: |
-  | Phase 1 | CPU Loading (FFT 未開始, switch 為 CPU) | CPU -> Port A -> BRAM |
-  | Phase 2 | FFT Running (Switch 轉成 FFT) | FFT -> Port A + Port B -> BRAM |
-  | Phase 3 | CPU Reading (Switch 切回 CPU) | BRAM -> Python |
+  | | Stage | Data Flow | Port A Owner |
+  | :--: | :--: |:--: | :--: |
+  | Phase 1 | CPU Loading (FFT 未開始, switch 為 CPU) | CPU -> Port A -> BRAM | CPU （AXI BRAM Controller）|
+  | Phase 2 | FFT Running (Switch 轉成 FFT) | FFT -> Port A + Port B -> BRAM | FFT Core |
+  | Phase 3 | CPU Reading (Switch 切回 CPU) | BRAM -> Python | CPU （AXI BRAM Controller）|
 
   </div>
 
+## 9.3 Block IP Detail
+1. 需要手動拉線的 IP :
+前面已介紹整體的資料流概念，但在點選 ```Run Connection Automation```前，我們需要將特別設計的線先拉在一起，包括
+  * AXI BRAM Controller -> bram_switch_v1_0
+  * my_fft_top_ip_v1_0 -> bram_switch_v1_0
+  * bram_switch_v1_0 -> Block Memory Generator
+  * my_fft_top_ip_v1_0 -> Block Memory Generator
 
+2. I/O 說明 :
+   基本上命名相當直觀，在了解 Data Flow 的情況下，將相同名稱連在一起即可。其中，每個 IP 最主要的訊號線包括 :
+   <div align="center">
     
+    | 名稱 | 意義 | 功能 |
+    | :--: | :--: |:--: |
+    | XXX_addr_a | Port A XXX element operating address | 要操作哪一個 Memory Address |
+    | XXX_wrdata_a| Port A XXX element write data | 如果現在是寫入，則要寫入的內容 |
+    | XXX_rddata_a | Port A XXX element read data | BRAM 回傳的資料 |
+    | XXX_we_a | Port A XXX element write enable | 現在是否為 Write |
+    | XXX_en_a| Port A XXX element enable | XXX element 是否啟動 |
+    | XXX_clk_a | Port A XXX element clock | XXX element Clock |
+    | XXX_rst_a | Port A XXX element reset | XXX element Reset |
+
+  </div>
+
+最後點選```Run Block Automation```、```Run Connection Automation```，會自動將 clock 和 reset 訊號線等自動拉再一起 (若有些IP漏掉則手動接上)。接線結果如下圖所示 :
+<p align="center">
+  <img width="1557" height="773" alt="image" src="https://github.com/user-attachments/assets/c300ea28-2c4a-46a1-bdd8-a19ed2c03f87" />
+</p>
+
+## 9.4 

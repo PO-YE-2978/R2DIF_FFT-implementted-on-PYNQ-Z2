@@ -1,4 +1,4 @@
-Chapter 9 - Vivado 建立 AXI Wrapper 與 PYNQ Overlay 整合流程
+Chapter 9 - Vivado 建立 AXI Wrapper 和 SoC Design Flow
 ===
 在前面的章節中，我們介紹到 FFT Core + AXI4-Lite Wrapper = 可以被 PYNQ 控制的 FPGA IP。而本章將會說明如何藉由 Block Design 將 PS (ARM Processor) 、PL (FFT Core IP) 
 和 AXI 介面等相關 IP 串聯起來，完成整個 SoC 架構。完整的開發流程如下 : 
@@ -99,5 +99,24 @@ Diagram 設計完後，點選旁邊的 Address Editor，應該會看到下圖 :
 <p align="center">
   <img width="500" height="110" alt="image" src="https://github.com/user-attachments/assets/dca8a62c-c6fe-4dd0-8a1c-6a409d2fd4de" />
 </p>
-這代表我們有兩個 slave IP，
 
+1. axi_bram_ctrl_0 (AXI BRAM Controller)
+   * 屬於 memory type 的 slave，其中 offset address 指的是對於 CPU 而言，BRAM 存的位置 (0x4000_0000 ~ 0x4000_1FFF) 共 8k Byte (2048 words)。
+     > 舉例來說，當 CPU 讀 0x4000_0000，AXI BRAM Controller 就會將其轉換成 BRAM Address = 0 (第 0 個 element)。
+   * 寫 python 時，我們會用```MMIO(0x40000000,8192)```代表 Memory 所在位置跟大小。若寫```mmio.write(4,999)```，就代表 CPU 對 addr 0x40000004 寫 999，i.e. BRAM[1] = 999。
+2. FFT IP
+   * 屬於 AXI Register 的 slave，也就是會將 slv_reg0 map 到 0x43C00000，slv_reg1 到 0x43C00004 ... 以此類推。
+     > 因為 slv_reg[0] = start，因此若在 python 寫 ```fft.write(0,1)``，代表 CPU 對 addr 0x43C00000 寫 1，也就是 fft 開始的意思。
+     
+此觀念即為 Memory Mapping : CPU 看的是 0x40000000，而 BRAM 看到 Address = 0，也就是透過 AXI BRAM Controller 進行 Address Translation。這部分對應到 PYNQ 中提供的 MMIO (Memory Mapped I/O) function。這也是為什麼 Vivado 的 Address Editor 對 SoC 設計非常重要，它定義了每個 AXI Slave 在 CPU 記憶體空間中的位置。
+
+確認完這些點後，對這個 block design (design_1) 右鍵，點```Create HDL Wrapper``` -> ```Let Vivado manager wrapper and auto-update```。
+接著選 Generate Bitstream，並將 design_1_wrapper.bit (描述FPGA配置) 和 design_1.hwh (用於硬體描述) 存起來，就可以進入 PYNQ Overlay 了。
+
+## 9.5 Chapter Review
+本章主要介紹了 Block Design 的內容和步驟，包括我們整個專案的 data flow、各個 IP 功能與如何連線等等。對於完整 SoC FPGA Accelerator 的開發流程而言，不是只有寫 Verilog 而已，更要了解
+<p align="center">
+  Algorithm -> RTL -> IP -> AXI -> Vivado System -> PYNQ Software
+</p>
+
+等一系列繁瑣細節。下一章開始我們將介紹 PYNQ Overlay、python data transmittion 並進行驗證和結果分析。

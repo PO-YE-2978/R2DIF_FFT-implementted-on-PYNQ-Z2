@@ -55,7 +55,7 @@ Chapter 8 - 將 FFT Core 封裝成 AXI4-Lite IP
       > 又因為 BRAM 獨立於我們的電路，因此算是外部 port，因此在 package 時需要保留腳位已進行溝通。
    6. 在```my_fft_top_ip_v1_0.v```的 ```my_fft_top_ip_v1_0_S00_AXI_inst``` (instance) 中補上 BRAM Port。
    7. 在```my_fft_top_ip_v1_0_S00_AXI.v``` 的底部補上控制訊號，同時加入我們的 FFT_top module。
-      > slv_reg0 ~ slv_reg3 是我們前面設定中保留的 4 個 32 bit I/O Register，module 的 I/O 從此處接入。
+      > slv_reg0 ~ slv_reg3 是我們前面設定中保留的 4 個 32 bit I/O Register，module 的 I/O 從此處接入 (如 start、DONE 訊號)。
       
       > 值得注意的是，在 default 產生的 code 中，我們將 2'h1   : reg_data_out <= slv_reg1; 的 slv_reg1 改成 output result。
    8. 在 Package IP 的地方，確定所有 Package Steps 皆有綠色的勾 (否則照提示點選直到完成) 後，在 Review and Package 中點選 Re-Package IP 後即包裝完成。

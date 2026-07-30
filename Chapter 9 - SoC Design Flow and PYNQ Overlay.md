@@ -43,8 +43,8 @@ Chapter 9 - Vivado 建立 AXI Wrapper 與 PYNQ Overlay 整合流程
     > Port A :  前面接 bram_switch_v1_0 (Multiplexer），決定 Port A 是由 AXI BRAM Controller 還是 FFT IP 控制。
     
     > Port B : 沒有經過 Switch，直接拉到 FFT Core。
-  * bram_switch_v1_0 : 這部分是我們另外寫的，因為 BRAM Port A 一次只能收一組控制訊號，但 CPU 和 FFT IP 都需要使用 (CPU 要寫 Input、讀 Output data,
-    FFT 則是計算 Intermediate result，兩者都是 BRAM 的 Master)，因此需要一個 switch (MUX) 決定現在 BRAM 接收誰的訊號。
+  * bram_switch_v1_0 : 這部分是我們另外寫的 (另一個獨立於 FFT Core 的 Verilog code，包裝方法如 Chapter 8 所示)，因為 BRAM Port A 一次只能收一組控制訊號，但 CPU 和 FFT IP 都需
+    要使用 (CPU 要寫 Input、讀 Output data, FFT 則是計算 Intermediate result，兩者都是 BRAM 的 Master)，因此需要一個 switch (MUX) 決定現在 BRAM 接收誰的訊號。
     > FFT 開始前 : switch mode 為 CPU；等 FFT 開始後，switch mode 為 FFT；計算完成以後，switch mode 再切回 CPU。
     
     > 我們現在用的 Dual Port BRAM 其實可以 CPU 接 port A，FFT 接 port B。但在我們的設計上，port A 和 B 是為了讓 butterfly PE 同時讀兩筆資料而設計，
@@ -85,11 +85,19 @@ Chapter 9 - Vivado 建立 AXI Wrapper 與 PYNQ Overlay 整合流程
     | XXX_clk_a | Port A XXX element clock | XXX element Clock |
     | XXX_rst_a | Port A XXX element reset | XXX element Reset |
 
-  </div>
+    </div>
 
-最後點選```Run Block Automation```、```Run Connection Automation```，會自動將 clock 和 reset 訊號線等自動拉再一起 (若有些IP漏掉則手動接上)。接線結果如下圖所示 :
+最後點選```Run Block Automation```、```Run Connection Automation```，會自動將 clock 和 reset 訊號線等自動拉再一起 (若有些IP漏掉則手動接上)。
+> 舉例來說，PS 端提供 M_AXI_GP0 (Master AXI)，而 FFT Core 則有 S_AXI (Slave AXI)，自動繞線後兩者就會接在一起。
+接線結果如下圖所示 :
 <p align="center">
   <img width="1557" height="773" alt="image" src="https://github.com/user-attachments/assets/c300ea28-2c4a-46a1-bdd8-a19ed2c03f87" />
 </p>
 
-## 9.4 
+## 9.4 Address Assignment and Final Check
+Diagram 設計完後，點選旁邊的 Address Editor，應該會看到下圖 : 
+<p align="center">
+  <img width="500" height="110" alt="image" src="https://github.com/user-attachments/assets/dca8a62c-c6fe-4dd0-8a1c-6a409d2fd4de" />
+</p>
+這代表我們有兩個 slave IP，
+

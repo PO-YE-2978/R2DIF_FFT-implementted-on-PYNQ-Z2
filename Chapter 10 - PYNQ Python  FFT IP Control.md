@@ -45,7 +45,7 @@ https://www.bilibili.com/video/BV1KY4y1x7Mk/?spm_id_from=333.1387.search.video_c
     bram = MMIO(BRAM_BASE,0x1000) // base address = 0x4000_0000, 大小為 0x1000
    ```
 2. FFT Register 控制和定義
-   * 此處說明 FFT Register 的位置，Python 只需要控制這些 Signal 即可，儲存的位置可以直接與我們的 packaging 對應
+   * 此處說明 FFT Register 的位置，Python 只需要控制這些 Signal 即可，儲存的位置可以直接與我們的 packaging 對應 (Chapter 8.2.7)
    ```python
     CTRL=0x00           // Control Register 的位置，也就是 Chapter 8 中的 slv_reg0[0]
     STAT=0x04           // State Register 的位置，也就是 Chapter 8 中的 slv_reg1[0]
@@ -55,3 +55,26 @@ https://www.bilibili.com/video/BV1KY4y1x7Mk/?spm_id_from=333.1387.search.video_c
 
     DONE_MASK=0x02      // DONE 存在 State Register 的 bit 1 
    ```
+3. Fixed-point Q1.15
+   * 之前說過我們的 Hardware 採用 Q1.15。為了有相同輸入，我們會也將 Python 的 floating point 轉成 16-bit Fixed Point。
+   ```python
+    q15_int() // 將 value mapped 到 [-32768, 32767]
+   ```
+4. Real and Imaginary value packaging
+   * 如同之前所講，最終 output value 會是 32-bit Word (16 bit Imag + 16 bit Real)，此處寫一個 function 將兩者 cascade 在一起。
+   ```python
+    pack_q15() // 輸出為 [16 bit Imag + 16 bit Real]
+   ```
+5. 測試訊號產生
+   * 最簡單驗證的測試訊號包括 :
+     <div align="center">
+      
+     | Input Pattern | Output Pattern |
+     | :--: | :--: |
+     | Constant | DC Impluse |
+     | Square wave | Sinc Function |
+     | Sinc Function | Square wave |
+     
+     </div>
+    * Code 上可參考 ```Generate real-valued input...``` block。
+6. 將資料寫入 BRAM

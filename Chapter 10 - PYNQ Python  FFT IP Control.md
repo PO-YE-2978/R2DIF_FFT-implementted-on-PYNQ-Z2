@@ -27,4 +27,5 @@ https://www.bilibili.com/video/BV1KY4y1x7Mk/?spm_id_from=333.1387.search.video_c
 
    * 上一章說明要保留 design_1_wrapper.bit 和 design_1.hwh，匯入 Jupyter Notebook 前需將兩者的名字設為相同。
 
-3. 
+## 10.2 FFT 驗證流程和 Code 介紹:
+Generate Test Signal -> Python Reference FFT -> Quantize Input -> Send to FPGA -> Read FPGA Output -> Reorder Compare

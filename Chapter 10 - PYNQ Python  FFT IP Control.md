@@ -26,3 +26,5 @@ https://www.bilibili.com/video/BV1KY4y1x7Mk/?spm_id_from=333.1387.search.video_c
      > 2. 讀取硬體資訊 (.hwh)。 *.hwh 包含 IP 名稱、AXI address 等。
 
    * 上一章說明要保留 design_1_wrapper.bit 和 design_1.hwh，匯入 Jupyter Notebook 前需將兩者的名字設為相同。
+
+3. 

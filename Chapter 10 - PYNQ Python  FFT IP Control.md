@@ -112,7 +112,7 @@ https://www.bilibili.com/video/BV1KY4y1x7Mk/?spm_id_from=333.1387.search.video_c
      4. 後續執行步驟 :
         > IDLE -> LOAD -> BUTTERFLY -> NEXT STAGE -> DONE
 
-8. Done Bit Reading
+8. Done Bit Reading (Polling Done bit)
    
    Python 不知道 FFT 什麼時候做完。因此利用 ```while true``` loop 搭配 time out 設定偵測 :
    ```python

@@ -150,7 +150,7 @@ https://www.bilibili.com/video/BV1KY4y1x7Mk/?spm_id_from=333.1387.search.video_c
 11. 與 NumPy FFT 比較
     * 在 python 端計算 FFT 採用內建 function : ```np.fft.fft()```。
     * 計算 error = hw_fft - sw_fft 並看差異。(以 square function 為例，Max absolute error: 0.00029509)。
-    * 最後利用 matplotlib 將相關資料以圖片的方式匯出，下方以 Input 為 square function 的測試結果 :
+    * 最後利用 matplotlib 將相關資料以圖片的方式匯出，下方以 Input 為 square function 的測試結果 (可自行更改 Input Pattern):
       <div align="center">
         <img width="1211" height="780" alt="image" src="https://github.com/user-attachments/assets/13f89e5c-b62b-49f6-8720-123431b5f8dc" />
       </div>

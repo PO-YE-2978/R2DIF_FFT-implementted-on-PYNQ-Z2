@@ -70,4 +70,57 @@ Chapter 11 - 整體專案回顧與未來優化方向
    3. 學習用 AXI-Stream。
       > 目前採用 AXI4-Lite，以後若需要大量資料傳輸，則建議可以改用 DMA + AXI-Stream 進行高速訊號處理。
 
-## 11.4 FFT 執行流程
+## 11.4 SoC 執行流程
+1. Step 1 : Python 傳送 input 到 BRAM
+   > Python -> AXI -> BRAM
+2. Step 2 : Start Signal Trigger
+   > Python 發送 start
+3. Step 3 : FFT 開始
+   > IDLE -> READ -> WAIT -> CALCULATE -> WRITE... 直到完成所有 6 stages × 32  = 192 次 butterfly。
+4. Step 4 : done signal
+   > FSM ->STATUS register -> Python
+5. Step 5 : Python 讀 output 並與 sw_fft 比較差異。
+
+* Knowledge Map :
+  * DSP Theory
+  * FFT Algorithm
+  * Hardware Mapping
+  * Butterfly Design
+  * Memory Architecture
+  * FSM Controller
+  * AXI IP Design
+  * Vivado Integration
+  * PYNQ Control
+  * FPGA Accelerator
+
+## 11.5 Final Summary
+這次 64-point FFT 專案學到的，不只是如何寫 FFT，更重要的是學習如何將一個數學演算法轉換成可以在 FPGA 上高速運行的硬體系統。Starting from chapter 1, we have gone through : 
+<p align="center">
+  Mathematical Algorithm -> Hardware Architecture -> RTL Implementation -> Memory Scheduling -> Control Design -> IP Packaging -> Software Interface -> System Verification
+</p>
+這也是 IC Design 中最核心的能力 : 
+<p align="center">
+  Algorithm → Architecture → Circuit → System
+</p>
+
+
+透過這個專案，我們已經接觸到：
+  * DSP Hardware Accelerator
+  * RTL Design
+  * FPGA Memory Architecture
+  * Digital System Design
+  * AXI Interface
+  * Embedded FPGA System
+    
+這套流程與概念，未來不只適用於 FFT，也可以延伸到
+  * CNN Accelerator
+  * AI Engine
+  * Image Processing
+  * Baseband Accelerator
+  * Wireless Communication
+等領域。
+
+最終的系統流程圖如下 : 
+<div align="center">
+  <img width="512" height="294" alt="image" src="https://github.com/user-attachments/assets/fef1eb0f-78f1-4c23-bacf-ab9e6a745907" />
+</div>

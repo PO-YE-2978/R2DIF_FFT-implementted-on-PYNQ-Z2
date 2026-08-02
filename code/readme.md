@@ -13,4 +13,4 @@
       * fft 改成 : r2dif_fft.bit, r2dif_fft.hwh。
     * FFT 的 python code 只需看最後一個 block。
   * Verilog
-    > 硬體 code。
+    > module code。

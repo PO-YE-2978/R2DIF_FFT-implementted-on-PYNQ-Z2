@@ -11,7 +11,7 @@
 - PYNQ Python 範例 / Notebook 用於載入 bitstream 與測試
 
 ## Stack
-- 語言：Verilog（RTL）、Tcl（Vivado scripts / BD）、Jupyter Notebook（驗證 / 教學）
+- 語言：Verilog（RTL）、Jupyter Notebook (python)（驗證 / 教學）
 - 開發環境：Xilinx Vivado 2019.2（建立/封裝 IP、產生 bitstream）、PYNQ ver3.1.1（在板上執行 Notebook 驗證）
 
 ## 儲存庫重要檔案與目錄
@@ -52,22 +52,21 @@ code/readme.md
 - twiddle_rom 提供複數旋轉因子，fft_butterfly / butterfly_pe 使用 complex_mult 及加減器完成每一組蝴蝶運算。
 - fft_top 整合上述模組並暴露 BRAM Port A/B 與控制訊號（start / busy / done）給外部（例如 AXI wrapper 或直接 BRAM controller）。
 
-## 先決條件
-- Xilinx Vivado（版本需支援你的板卡與 IP 開發）
-- PYNQ（對應 PYNQ-Z2 影像）
-- Verilog 模擬器（若要在主機上模擬，例如 Vivado Simulator / ModelSim）
+## 版本需求
+- Xilinx Vivado 2019.2（版本需支援你的板卡與 IP 開發）
+- PYNQ（對應 PYNQ-Z2 image）
 
 ## 快速上手（從原始碼到板卡）
-1. 在 Vivado 中建立新工程，加入 sources：
+1. 在 Vivado 中建立新 project，加入 sources：
    - 將 `code/R2DIF_FFT/source/Verilog/*.v` 加入為 RTL sources。
    - 若使用 IP packaging，依 `code/R2DIF_FFT/ip_repo` 裡的 metadata 封裝 IP 並安裝到 Vivado IP repo。
 2. 封裝為 IP：
-   - 使用 Vivado 的 "Package IP" 指引，封裝 `fft_top` 作為 AXI 周邊（必要時新增 AXI4-Lite 控制介面或 AXI BRAM / wrapper）。
+   - 使用 Vivado 的 "Package IP" 指引，封裝 `fft_top` 作為 AXI peripheral（必要時新增 AXI4-Lite 控制介面或 AXI BRAM / wrapper）。
 3. 建立 Block Design：
-   - 新增 Zynq7 Processing System、AXI interconnect、BRAM controller，並將 FFT IP 與 BRAM 連線。
+   - 新增 Zynq7 Processing System、AXI interconnect、BRAM controller 等，並將 FFT IP 與 BRAM 連線。
    - 產生 bitstream（Generate Bitstream）。
 4. 部署到 PYNQ：
-   - 從 Vivado 取得 `.bit` 與 `.hwh` 檔案 (或 file 中的 PYNQ)，並放到 PYNQ 板的 overlay 目錄下，檔名需一致（例如 `r2dif_fft.bit` 與 `r2dif_fft.hwh`）。
+   - 從 Vivado 取得 `.bit` 與 `.hwh` 檔案 (或從 `code/R2DIF_FFT/source/PYNQ/`取得)，並放到 PYNQ 板的 overlay 目錄下，檔名需一致（例如 `r2dif_fft.bit` 與 `r2dif_fft.hwh`）。
    - 在 PYNQ 上啟動 Notebook，載入 Overlay 並透過 MMIO / 驅動控制 start 與讀取結果（請參閱 Chapter 10 的範例）。
 
 ## PYNQ 範例（概念性）

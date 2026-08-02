@@ -1,4 +1,4 @@
-# R2DIF_FFT — 64-point Radix-2 DIF FFT on PYNQ-Z2
+# A complete hardware/software co-design project featuring Verilog RTL implementation, AXI4-Lite IP packaging, BRAM-based memory architecture, custom BRAM switch, and PYNQ-based validation of a 64-point Radix-2 DIF FFT accelerator.
 
 ## 簡短說明
 本專案實作並驗證 一個 64-point Radix-2 Decimation-In-Frequency (R2DIF) FFT 硬體 IP，採用單一資料 BRAM（雙埠）策略，實作於 Xilinx Zynq SoC 平台並以 PYNQ-Z2 板卡進行功能驗證與控制。FFT 核心以 Verilog 撰寫，並封裝為可於 Vivado 中引入的 IP / Overlay，由 PYNQ (Python + Jupyter Notebook) 在 PS 端做控制與驗證。
